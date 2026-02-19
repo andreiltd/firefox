@@ -14993,12 +14993,16 @@ AttachDecision BinaryArithIRGenerator::tryAttachStringConcat() {
     return AttachDecision::NoAction;
   }
 
+#ifdef ENABLE_PORTABLE_BASELINE_INTERP
+  JitCode* code = nullptr;
+#else
   JitCode* code = cx_->zone()->jitZone()->ensureStubExists(
       cx_, JitZone::StubKind::StringConcat);
   if (!code) {
     cx_->recoverFromOutOfMemory();
     return AttachDecision::NoAction;
   }
+#endif
 
   ValOperandId lhsId(writer.setInputOperandId(0));
   ValOperandId rhsId(writer.setInputOperandId(1));
